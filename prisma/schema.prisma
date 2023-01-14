@@ -1,0 +1,253 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Employee {
+  employeeId  Int    @id @unique @default(autoincrement())
+  first_name  String
+  last_name   String
+  email       String
+  nssf_number String
+  kra_pin     String
+  phone       String
+
+  hire_date     DateTime @default(now())
+  overtime_rate Float
+  job_title     String
+  salary        Float
+  department    String
+
+  bio      String
+  is_admin Boolean
+
+  created_at        DateTime           @default(now())
+  updated_at        DateTime           @updatedAt
+  EmployeeDocuments EmployeeDocument[]
+
+  @@map("employees")
+}
+
+// model Address {
+//   employeeId String @id 
+// }
+
+// model User {
+//   userId String @id
+// }
+
+// model Payroll {
+//   employeeId    String   @id @unique
+//   first_name    String
+//   last_name     String
+//   email         String
+//   address       String
+//   phone         String
+//   hire_date     DateTime
+//   overtime_rate Float
+//   salary        Float
+//   departments   String
+//   job_title     String
+//   bio           String
+
+//   @@map("payrolls")
+// }
+
+// cloud based storage(S3 bucket) of employee documents: Contracts, policies, or procedures[on tasks and research docs]
+model EmployeeDocument {
+  docId         String @id
+  document_type String
+  document_url  String
+
+  employee   Employee @relation(fields: [employeeId], references: [employeeId])
+  employeeId Int
+
+  @@map("employee_documents")
+}
+
+// model TimeSheet {
+//   timeSheetId   String   @id @unique
+//   first_name    String
+//   last_name     String
+//   email         String
+//   address       String
+//   phone         String
+//   hire_date     DateTime
+//   overtime_rate Float
+//   salary        Float
+//   departments   String
+//   job_title     String
+//   bio           String
+
+//   @@map("timesheets")
+// }
+
+// model Benefit {
+//   benefitId     String   @id @unique
+//   first_name    String
+//   last_name     String
+//   email         String
+//   address       String
+//   phone         String
+//   hire_date     DateTime
+//   overtime_rate Float
+//   salary        Float
+//   departments   String
+//   // taxes?
+//   job_title     String
+//   bio           String
+
+//   @@map("employee_benefits")
+// }
+
+// model Leave {
+//   employeeId String @id
+
+//   @@map("leaves")
+// }
+
+// model Tax {
+//   employeeId String @id
+
+//   @@map("taxes")
+// }
+
+// Income Tax :: Auto calculate
+// NSSF() calculate from gross ?5%
+// NHIF >1.5%?
+// HDMF : Home development mutual fund
+// PAYE <directly to KRA>
+
+model Organization {
+  organizationId    String @id
+  sector            String // cleaning services, gig workers, logisitics, startUps, security firm, manufacturing, financial, banking, ICT, retail hospitality real estate retail construction
+  organization_name String
+  team_size         Int
+  country           String
+  email             String
+
+  @@map("organizations")
+}
+
+model BookDemo {
+  demoId              String  @id
+  first_name          String
+  last_name           String
+  company_email       String
+  company_name        String
+  job_title           String?
+  number_of_employees String
+  phone               String?
+
+  @@map("booked_demos")
+}
+
+model Review {
+  revieId    String  @id
+  title      String
+  decription String
+  complaints String?
+
+  @@map("reviews")
+}
+
+model NoticeBoard {
+  noticeId     String   @id
+  title        String
+  departmentId String[] // array of all departments to communicate to..
+  description  String
+
+  @@map("notice_board")
+}
+
+// model Subscription {
+//   subscriptionId String  @id
+//   // plan 
+//   // billingPeriod
+//   // payment type => Our wallet, mpesa, co-op bank, stripe, Equitel, Flutterwave etc
+//   autorenew      Boolean
+
+//   @@map("subscriptions")
+// }
+
+// model Billing {
+//   billingId String @id
+//   history   String
+// }
+
+// model Invoice {
+//   invoiceId String @id
+
+//   @@map("invoices")
+// }
+
+// model Profile {
+//   lol String @id
+//   // change pic, change passwd, name, email, phone,
+
+//   @@map("profiles")
+// }
+
+// model Pricing {
+//   pricingId String @id
+// }
+
+// model Report {
+//   pricingId String @id
+
+//   @@map("reports")
+// }
+
+// model Setting {
+//   settingId String @id
+// }
+
+// model Ticket {
+//   ticketId String @id
+// }
+
+// model DBBackup {
+//   lol String @id
+
+//   @@map("database_backups")
+// }
+
+// model Project {
+//   projectId String @id
+// }
+
+// model Task {
+//   taskId String @id
+// }
+
+// Recruitment:status job
+// JobModel : title, description, id, deadline, posted at, updated at, department..
+// Outsourced roles : and how to manage the payments of such E.g Writers and software reviewers
+// ResetPasswordToken: id, user_id, token, time_expires
+
+// Onboarding
+
+// Expense & Expense Type
+
+// - Recruitment & Training
+// - Onboarding & Offboaring features
+// model Channel {
+//   channelId    String @id
+//   channel_type String // email, push, sms ...slack
+//   msg          String
+// }
+
+model Log {
+  logId        String   @id
+  log_type     String // ['Log In', 'Log Out', 'Create Freelancer', 'Create Client', 'Register', 'Reset Password', 'General Log']
+  time_created DateTime
+  ip_address   String
+  // userId
+  // action [Access Log]
+}
+
+// 45 tables?? [MVP]

@@ -30,3 +30,9 @@
 
 ### Future Recommendations
 
+- Use Data Platforms: [Xata, Streamlit, Apache Kafka, Apache Pulsar, D. Warehouse, Upstash, Astra streaming]
+- ML on serverless infra
+- Observability, Monitoring, and Distributed tracing
+- Data Mesh, Service Mesh, API Mesh
+- Snowflake [DaaS]
+- SPDY HTTP/2 Support
