@@ -7,33 +7,55 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// model Supervisor{}
+// model Report {} : expense, audit, salary etc: pdf generation over email..
+
 model Employee {
-  employeeId  Int    @id @unique @default(autoincrement())
-  first_name  String
-  last_name   String
-  email       String
-  nssf_number String
-  kra_pin     String
-  phone       String
+  employeeId     Int    @id @unique @default(autoincrement())
+  first_name     String
+  last_name      String
+  email          String
+  phone          String
+  job_title      String
+  department     String
+  gender         String
+  marital_status String
 
-  hire_date     DateTime @default(now())
-  overtime_rate Float
-  job_title     String
-  salary        Float
-  department    String
-
-  bio      String
+  bio      String?
   is_admin Boolean
 
-  created_at        DateTime           @default(now())
-  updated_at        DateTime           @updatedAt
-  EmployeeDocuments EmployeeDocument[]
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+  resources  Resource[]
 
   @@map("employees")
 }
 
+// Order any equipments employee will need
+model Equipment_Supply {
+  id        String @id
+  equipment String // e.g laptop, tablet, uniform, biz cards,,,
+}
+
+// [Personal Data <employee_table>, Salary Data <payroll_table:e.g main salary ...{deductions}>, Absence period<LeaveAnd.._table>]
+// Filter by Year, Period, Month (changes effective since DateTime)
+
+//model Project{}
+//model Task {}
+
+model Contract {
+  contractId     String   @id
+  contract_start DateTime @default(now())
+  contract_ends  DateTime
+  updatedAt      DateTime //@updateAt
+
+  contract   Employee @relation(fields: [id], references: [employeeId])
+  employeeId Int
+}
+
 // model Address {
 //   employeeId String @id 
+// street, p.o box, city, country
 // }
 
 // model User {
@@ -41,25 +63,31 @@ model Employee {
 // }
 
 // model Payroll {
-//   employeeId    String   @id @unique
-//   first_name    String
-//   last_name     String
-//   email         String
-//   address       String
-//   phone         String
-//   hire_date     DateTime
-//   overtime_rate Float
-//   salary        Float
-//   departments   String
-//   job_title     String
-//   bio           String
+// main_salary Float
+// compenstations Float // e.g fitness, library etc
+// allowances Float // fuel...
+// overtime_rate Float
+// bonus Float
+//   nssf_number String
+// kra_pin     String
 
 //   @@map("payrolls")
 // }
 
+model Bonus {
+  bonusId      String @id
+  bonus_amount Float
+  // bonus_type   quarterly | monthly | annually
+  // period??.
+  // @@map('bonuses')
+}
+
+// Models: [Attendance(leaves include reason..), Absence, Performance, Onboarding, ..{Offboarding}, History, Roles<Tasks>, Notes]
+
 // cloud based storage(S3 bucket) of employee documents: Contracts, policies, or procedures[on tasks and research docs]
-model EmployeeDocument {
-  docId         String @id
+
+model Resource {
+  resourceId    String @id
   document_type String
   document_url  String
 
@@ -67,6 +95,13 @@ model EmployeeDocument {
   employeeId Int
 
   @@map("employee_documents")
+}
+
+model SharingSettings {
+  id         Int    @id @default(autoincrement())
+  resourceId Int    @unique
+  userId     Int
+  role       String
 }
 
 // model TimeSheet {
@@ -159,10 +194,13 @@ model NoticeBoard {
   noticeId     String   @id
   title        String
   departmentId String[] // array of all departments to communicate to..
-  description  String
+  description  String // e.g alert of a new employee arrival etc
 
   @@map("notice_board")
 }
+
+// remote team : departmtId, employeeId, etc
+//model Remote{}
 
 // model Subscription {
 //   subscriptionId String  @id
