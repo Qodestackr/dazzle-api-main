@@ -7,155 +7,394 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// model Supervisor{}
-// model Report {} : expense, audit, salary etc: pdf generation over email..
+///////////
+// USER RELATED
+//////////
 
-model Employee {
-  employeeId     Int    @id @unique @default(autoincrement())
-  first_name     String
-  last_name      String
-  email          String
-  phone          String
-  job_title      String
-  department     String
-  gender         String
-  marital_status String
+model User {
+  id         Int    @id
+  first_name String
+  last_name  String
+  email      String
+  phone      String
+  job_title  String
+  department String
+  gender     String
+
+  employment_status EmploymentStatus
+  marital_status    MaritalStatus
 
   bio      String?
   is_admin Boolean
 
-  created_at DateTime   @default(now())
-  updated_at DateTime   @updatedAt
-  resources  Resource[]
+  created_at DateTime     @default(now())
+  updated_at DateTime     @updatedAt
+  //   resources  Resource[]
+  Department Department[]
+  Audit      Audit[]
 
-  @@map("employees")
+  @@map("users")
 }
 
-// Order any equipments employee will need
+enum MaritalStatus {
+  SINGLE
+  ENGAGED
+  MARRIED
+  OTHER
+}
+
+enum EmploymentStatus {
+  ACTIVE
+  SUSPENDED
+  ON_HOLD // hired on short term basis
+  CONTRACT_OVER
+  CONTRACT_TERMINATED
+  //...
+}
+
+model UserProfile {
+  id Int @id
+}
+
+model UserSetting {
+  id Int @id
+
+  @@map("user_settings")
+}
+
+model UserAddress {
+  employeeId String @id
+  // street, p.o box, city, country
+
+  @@map("user_address")
+}
+
+model Employee_BackgroundCheck {
+  id Int @id
+
+  criminal_charges     Boolean
+  criminal_description String
+
+  // credits/ ref/ criminal... etc
+
+  @@map("employee_background_check")
+}
+
+model EmergencyContact {
+  id Int @id
+
+  dependent_name     String
+  dependent_relation String
+  dependent_contact  String
+
+  @@map("emergency_and_nextofkin")
+}
+
+model UserToken {
+  id Int @id
+
+  token String
+
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  expiry_time DateTime
+
+  userId Int
+
+  @@map("user_token")
+}
+
+model ResetPasswordToken {
+  id Int @id
+
+  reset_token String
+
+  created_at  DateTime @default(now())
+  update_at   DateTime @updatedAt
+  expiry_time DateTime
+
+  userId Int
+
+  @@map("reset_password_token")
+}
+
+model RefreshToken {
+  id Int @id
+
+  refresh_token String
+
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  expiry_time DateTime
+
+  userId Int
+
+  @@map("refresh_token")
+}
+
+model LoginHistory {
+  id Int @id
+
+  // last login etc
+
+  userId Int
+
+  @@map("user_login_history")
+}
+
+enum UserPolicy {
+  VIEW_ALL
+  VIEW_SINGLE
+  REQUEST_ALL
+  EFFECT_ALLOW
+  EFFECT_DENY
+
+  @@map("user_policies")
+}
+
+enum UserRole {
+  BASIC
+  EMPLOYEE
+  SUPERVISOR
+  SALES
+  ENGINEERING
+  MARKETING
+  MANAGER
+  HR_MANAGER // super_admin
+
+  @@map("user_roles")
+}
+
+/////////
+// JOB
+////////
+
+model Job {
+  id       Int    @id
+  job_code String
+
+  job_title        String
+  job_description  String
+  min_requirements String
+  salary_range     String
+
+  reporting_manager String // hiring team : TODO: Attach profile,,
+
+  deadline   DateTime
+  posted_at  DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  benefitId    String
+  departmentId String
+
+  @@map("jobs")
+}
+
+model Benefit {
+  id Int @id
+
+  @@map("job_benefits")
+}
+
+/////////
+// CONTRACT x ON/OFF(BOARD)
+////////
+
+model Onboard {
+  id Int @id
+}
+
+//equipments & project transfer
+model Offboard {
+  id Int @id
+
+  equipment_return_status EquipmentSupplyStatus
+  termination_reason      String
+
+  termination_date DateTime
+
+  userId Int
+}
+
+enum EquipmentSupplyStatus {
+  PENDING
+  SUCCESS_RETURN
+  FAILED_RETURN
+}
+
+model Immigration {
+  id Int @id
+}
+
+model OutsourceWork {
+  id Int @id
+}
+
+model Contract {
+  contractId String @id
+
+  contract_title       String
+  contract_description String
+
+  contract_start DateTime @default(now())
+  contract_end   DateTime
+  updated_at     DateTime @updatedAt
+
+  jobId      Int
+  benefitId  Int
+  // contract   Employee @relation(fields: [id], references: [employeeId])
+  employeeId Int
+}
+
 model Equipment_Supply {
   id        String @id
   equipment String // e.g laptop, tablet, uniform, biz cards,,,
 }
 
-// [Personal Data <employee_table>, Salary Data <payroll_table:e.g main salary ...{deductions}>, Absence period<LeaveAnd.._table>]
-// Filter by Year, Period, Month (changes effective since DateTime)
+//e-docs
+model Resource {
+  id            Int    @id
+  document_type String
+  document_url  String
 
-//model Project{}
-//model Task {}
-
-model Contract {
-  contractId     String   @id
-  contract_start DateTime @default(now())
-  contract_ends  DateTime
-  updatedAt      DateTime //@updateAt
-
-  contract   Employee @relation(fields: [id], references: [employeeId])
+  // employee   Employee @relation(fields: [employeeId], references: [employeeId])
   employeeId Int
+
+  @@map("resources_and_documents")
 }
 
-// model Address {
-//   employeeId String @id 
-// street, p.o box, city, country
-// }
+model ResourceSetting {
+  id Int @id
 
-// model User {
-//   userId String @id
-// }
+  @@map("resource_settings") // actions etc
+}
 
-// model Payroll {
-// main_salary Float
-// compenstations Float // e.g fitness, library etc
-// allowances Float // fuel...
-// overtime_rate Float
-// bonus Float
-//   nssf_number String
-// kra_pin     String
+model Performance {
+  id Int @id
 
-//   @@map("payrolls")
-// }
+  performance_note String
+}
+
+//////////
+// PROJECT
+//////////
+
+model Project {
+  id Int @id
+}
+
+model Task {
+  id Int @id
+}
+
+model Training_Career_Development {
+  id Int @id
+}
+
+//////////
+// LEAVE x PAYROLL
+/////////
+
+model TimeSheet {
+  id            Int      @id
+  userId        String
+  date          DateTime
+  startTime     DateTime
+  endTime       DateTime
+  totalHours    String
+  overtimeHours Int
+  rate          Float
+
+  @@map("timesheets")
+}
+
+model Attendance {
+  id       Int      @id
+  // type : training attendance ,, job,, meeting ,, etc*
+  date     DateTime
+  checkin  String
+  checkout String
+}
+
+model Absence {
+  id Int @id
+
+  reason String
+  status Boolean //!Approved...Communicated...Rejected
+}
+
+model Leave {
+  id        Int      @id
+  userId    String
+  startDate DateTime
+  endDate   DateTime
+  type      String // type of leave: sick, holiday, ...*
+  status    String // pending/ approved/ rejected
+  reason    String
+
+  @@map("leaves")
+}
+
+model PayrollPaymentMethod {
+  id Int @id
+
+  @@map("payroll_payment_method")
+}
+
+model Salary {
+  id Int @id
+}
 
 model Bonus {
-  bonusId      String @id
+  id           Int   @id
   bonus_amount Float
   // bonus_type   quarterly | monthly | annually
   // period??.
   // @@map('bonuses')
 }
 
-// Models: [Attendance(leaves include reason..), Absence, Performance, Onboarding, ..{Offboarding}, History, Roles<Tasks>, Notes]
-
-// cloud based storage(S3 bucket) of employee documents: Contracts, policies, or procedures[on tasks and research docs]
-
-model Resource {
-  resourceId    String @id
-  document_type String
-  document_url  String
-
-  employee   Employee @relation(fields: [employeeId], references: [employeeId])
-  employeeId Int
-
-  @@map("employee_documents")
+model Deduction {
+  id Int @id
 }
 
-model SharingSettings {
-  id         Int    @id @default(autoincrement())
-  resourceId Int    @unique
-  userId     Int
-  role       String
+model Tax {
+  userId String @id
+
+  tax_type   TaxType
+  tax_amount Float
+
+  @@map("taxes")
 }
 
-// model TimeSheet {
-//   timeSheetId   String   @id @unique
-//   first_name    String
-//   last_name     String
-//   email         String
-//   address       String
-//   phone         String
-//   hire_date     DateTime
-//   overtime_rate Float
-//   salary        Float
-//   departments   String
-//   job_title     String
-//   bio           String
+enum TaxType {
+  INCOME_TAX
+  PAYE
+  NHIF
+  NSSF
+  HDMF
+}
 
-//   @@map("timesheets")
-// }
+model Payroll {
+  id             Int    @id
+  main_salary    Float
+  compenstations Float // e.g fitness, library etc
+  allowances     Float // fuel...
+  overtime_rate  Float
+  bonus          Float
+  nssf_number    String
+  kra_pin        String
 
-// model Benefit {
-//   benefitId     String   @id @unique
-//   first_name    String
-//   last_name     String
-//   email         String
-//   address       String
-//   phone         String
-//   hire_date     DateTime
-//   overtime_rate Float
-//   salary        Float
-//   departments   String
-//   // taxes?
-//   job_title     String
-//   bio           String
+  @@map("payrolls")
+}
 
-//   @@map("employee_benefits")
-// }
+// payroll history
+model PayrollTransaction {
+  id Int @id
+}
 
-// model Leave {
-//   employeeId String @id
-
-//   @@map("leaves")
-// }
-
-// model Tax {
-//   employeeId String @id
-
-//   @@map("taxes")
-// }
-
-// Income Tax :: Auto calculate
-// NSSF() calculate from gross ?5%
-// NHIF >1.5%?
-// HDMF : Home development mutual fund
-// PAYE <directly to KRA>
+/////////
+// BUSINESS RELATED
+////////
 
 model Organization {
   organizationId    String @id
@@ -165,11 +404,120 @@ model Organization {
   country           String
   email             String
 
+  departments Department[]
+
   @@map("organizations")
 }
 
+model OrganizationAddress {
+  id Int @id
+}
+
+model Department {
+  id Int @id
+
+  department_name           String
+  department_description    String
+  department_policy_details String
+  manager                   User?        @relation(fields: [managerId], references: [id])
+  expenses                  Expense[]
+  compliances               Compliance[]
+
+  organization   Organization @relation(fields: [organizationId], references: [organizationId])
+  organizationId String
+
+  managerId Int
+}
+
+model Compliance {
+  id Int @id
+
+  compliance_description String
+  compliance_type        ComplianceType
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  department   Department @relation(fields: [departmentId], references: [id])
+  departmentId Int
+}
+
+enum ComplianceType {
+  HEALTH
+  SYSTEM_SECURITY
+  PAY
+  HIPAA // Health
+  GDPR // General Data Protection Regulation
+  OSHA // Occupation Safety and Health Admin
+  FLSA // Fair Labor Standard Act
+  ACA // Affordable Care Act
+  FMLA //Family and Medical Leave Act
+  EPA // Equal Pay Act
+  PWDS // ...with dissabilities got some tax exceptions
+}
+
+model Report {
+  id Int @id
+}
+
+model Expense {
+  id Int @id
+
+  description String
+  amount      Float
+  type        ExpenseType
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  department    Department @relation(fields: [departmentId], references: [id])
+  departmentId  Int
+  expenseTypeId Int
+}
+
+enum ExpenseType {
+  TRAVEL
+  MEAL
+  OFFICE_SUPPLY
+  OTHER
+}
+
+// or model Message: status:read/unread/ delivered
+model Message {
+  id Int @id
+
+  sender    String
+  recipient String
+  channel   String // email, in-app, slack, discord, push notification, sms, telegram , use * to send to all
+  message   String // content
+
+  status String
+  source String // system log/ in-app, email, system generated(!new payroll update), direct comm etc
+
+  timestamp DateTime
+}
+
+model NoticeBoard {
+  noticeId String @id
+
+  notice_title       String
+  notice_description String // e.g alert of a new employee arrival etc
+
+  posted_at  DateTime
+  updated_at DateTime @updatedAt
+
+  departmentId String // tick all departments to communicate to.. 
+
+  @@map("notice_board")
+}
+
+////////
+// SAAS SIDE
+///////
+
 model BookDemo {
-  demoId              String  @id
+  demoId String @id
+
   first_name          String
   last_name           String
   company_email       String
@@ -181,111 +529,115 @@ model BookDemo {
   @@map("booked_demos")
 }
 
-model Review {
-  revieId    String  @id
-  title      String
-  decription String
-  complaints String?
-
-  @@map("reviews")
+model Pricing {
+  id Int @id
 }
 
-model NoticeBoard {
-  noticeId     String   @id
-  title        String
-  departmentId String[] // array of all departments to communicate to..
-  description  String // e.g alert of a new employee arrival etc
+model Billing {
+  id Int @id
 
-  @@map("notice_board")
+  date   DateTime @default(now())
+  amount Float
 }
 
-// remote team : departmtId, employeeId, etc
-//model Remote{}
+model Invoice {
+  id Int @id
+}
 
-// model Subscription {
-//   subscriptionId String  @id
-//   // plan 
-//   // billingPeriod
-//   // payment type => Our wallet, mpesa, co-op bank, stripe, Equitel, Flutterwave etc
-//   autorenew      Boolean
+model Subscription {
+  subscriptionId String @id
 
-//   @@map("subscriptions")
-// }
+  subscription_plan String
+  billing_period    Int
+  autorenew         Boolean
 
-// model Billing {
-//   billingId String @id
-//   history   String
-// }
+  payment_types BSPaymentMethod @relation(fields: [paymentTypeId], references: [id])
 
-// model Invoice {
-//   invoiceId String @id
+  paymentTypeId Int
 
-//   @@map("invoices")
-// }
+  @@map("payment_subscriptions")
+}
 
-// model Profile {
-//   lol String @id
-//   // change pic, change passwd, name, email, phone,
+model BSPaymentMethod {
+  id Int @id
 
-//   @@map("profiles")
-// }
+  description String
+  type        E_BSPaymentMethod
 
-// model Pricing {
-//   pricingId String @id
-// }
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
-// model Report {
-//   pricingId String @id
+  subscriptions Subscription[]
 
-//   @@map("reports")
-// }
+  @@map("business_payment_method")
+}
 
-// model Setting {
-//   settingId String @id
-// }
+enum E_BSPaymentMethod {
+  M_PESA
+  //bank*
+  COOP_BANK
+  EQUITY_BANK
+  GOOGLE_PAY
+  PAYPAL
+  DAZZLE_WALLET
+  VISA_CARD
+  MASTERCARD
 
-// model Ticket {
-//   ticketId String @id
-// }
+  // flutterwave, stripe...
+}
 
-// model DBBackup {
-//   lol String @id
+// Actions performed within the system
+model Audit {
+  id Int @id
 
-//   @@map("database_backups")
-// }
-
-// model Project {
-//   projectId String @id
-// }
-
-// model Task {
-//   taskId String @id
-// }
-
-// Recruitment:status job
-// JobModel : title, description, id, deadline, posted at, updated at, department..
-// Outsourced roles : and how to manage the payments of such E.g Writers and software reviewers
-// ResetPasswordToken: id, user_id, token, time_expires
-
-// Onboarding
-
-// Expense & Expense Type
-
-// - Recruitment & Training
-// - Onboarding & Offboaring features
-// model Channel {
-//   channelId    String @id
-//   channel_type String // email, push, sms ...slack
-//   msg          String
-// }
-
-model Log {
-  logId        String   @id
-  log_type     String // ['Log In', 'Log Out', 'Create Freelancer', 'Create Client', 'Register', 'Reset Password', 'General Log']
+  log_type     AuditAction
   time_created DateTime
   ip_address   String
-  // userId
+
+  user User? @relation(fields: [userId], references: [id])
+
+  userId       Int?
+  departmentId Int?
   // action [Access Log]
 }
 
-// 45 tables?? [MVP]
+enum AuditAction {
+  CREATE
+  READ
+  UPDATE
+  DELETE
+
+  USER_REGISTER
+  USER_LOGIN
+  USER_LOGOUT
+  USER_RESET_PASSWORD
+
+  ADMIN_CREATE //...
+
+  GENERAL_LOG
+
+  @@map("user_actions")
+}
+
+// query for backups based on their schedule times.
+model DatabaseBackup {
+  id Int @id
+
+  backup_name        String
+  backup_description String
+  backup_location    String
+
+  last_backup     DateTime
+  backup_schedule ScheduleBackupTime
+
+  @@map("database_backups")
+}
+
+// give a way to trigger backups now[UI],,
+enum ScheduleBackupTime {
+  TWO_HOURS
+  EIGHT_HOURS
+  DAILY
+  WEEKLY
+  MONTHLY
+}
