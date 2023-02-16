@@ -24,7 +24,6 @@ model User {
   employment_status EmploymentStatus
   marital_status    MaritalStatus
 
-  bio      String?
   is_admin Boolean
 
   created_at DateTime     @default(now())
@@ -54,6 +53,10 @@ enum EmploymentStatus {
 
 model UserProfile {
   id Int @id
+
+  username  String
+  bio       String
+  image_url String
 }
 
 model UserSetting {
@@ -281,10 +284,72 @@ model Performance {
 
 model Project {
   id Int @id
+
+  project_name        String
+  project_description String
+  project_status      ProjectStatus
+
+  expected_start_date DateTime
+  expected_end_date   DateTime
+  start_date          DateTime
+  end_date            DateTime
+
+  tasks      Task[]
+  department Department @relation(fields: [departmentId], references: [id])
+
+  departmentId  Int
+  trelloBoardId String?
+  spreadsheetId String? // track tasks, timelines, budgets, milestones,
+
+  @@map("projects")
 }
 
+enum ProjectStatus {
+  PENDING
+  STARTED
+  ENDED
+  HALTED
+}
+
+// TODO: Create a Spreadsheet model with fields for 
+// the spreadsheetId, name, and associated Project. 
+// This would allow you to associate a Google Sheet with a project and store any 
+// relevant data that isn't already being tracked in the Project or Task models.
+
+// model Spreadsheet {
+//   id            Int      @id @default(autoincrement())
+//   spreadsheetId String
+//   name          String
+//   project       Project  @relation(fields: [projectId], references: [id])
+//   projectId     Int
+// }
+
+// When you create a new project, you can use the Trello API to create a new Trello board and obtain its ID. 
+// You can then create a new TrelloBoard 
+// object in your database and associate it with the new project using the projectId field.
+
+// TODO: Manage project on Trello board
+// model TrelloBoard {
+//   id        Int      @id @default(autoincrement())
+//   boardId   String //ID of the Trello board associated with the project.
+//   name      String
+//   project   Project  @relation(fields: [projectId], references: [id])
+//   projectId Int
+// }
+
 model Task {
-  id Int @id
+  id          Int        @id
+  name        String
+  description String?
+  status      TaskStatus
+  project     Project    @relation(fields: [projectId], references: [id])
+  projectId   Int
+}
+
+enum TaskStatus {
+  OPEN
+  IN_PROGRESS
+  DONE
 }
 
 model Training_Career_Development {
@@ -404,13 +469,22 @@ model Organization {
   country           String
   email             String
 
+  address OrganizationAddress[]
+
   departments Department[]
 
   @@map("organizations")
 }
 
 model OrganizationAddress {
-  id Int @id
+  id     Int    @id
+  po_box String
+  street String
+  city   String
+  town   String
+
+  orginization   Organization @relation(fields: [organizationId], references: [organizationId])
+  organizationId String
 }
 
 model Department {
@@ -419,9 +493,11 @@ model Department {
   department_name           String
   department_description    String
   department_policy_details String
-  manager                   User?        @relation(fields: [managerId], references: [id])
-  expenses                  Expense[]
-  compliances               Compliance[]
+
+  manager     User         @relation(fields: [managerId], references: [id])
+  expenses    Expense[]
+  compliances Compliance[]
+  projects    Project[]
 
   organization   Organization @relation(fields: [organizationId], references: [organizationId])
   organizationId String
