@@ -1,5 +1,35 @@
-_models_
-_models_/*
-node_modules
-node_modules/*
-.env
+# Django specific files
+__pycache__/
+*.pyc
+*.pyo
+*.db.sqlite3
+
+# Virtual Environment
+venv/
+env/
+pip-lock.txt
+.venv/
+
+# IDE settings
+.idea/
+.vscode/
+
+# Logs and error files
+logs/
+*.log
+
+# Static and media files
+staticfiles/
+media/
+
+# Database backup files
+db_backup/
+
+# Compiled Python files
+*.pyc
+
+# Local development settings
+*.env
+
+# Dependency directories
+node_modules/

@@ -1,6 +1,0 @@
-// Handled by Google Spreadsheets [manage & store]=>integrate back to main application
-model Quota {
-    id Int @id
-}
-
-// models: Ticket, coupons
