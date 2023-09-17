@@ -37,7 +37,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
+
+    'auth_service',
+    'attendance_and_timesheet',
+    'billing_services',
+    'hr_ops',
+    'leave_management',
+    'messaging_service',
+    'payroll',
+    'performance_mgt',
+    'recruit_and_track',
     'rest_framework',
 ]
 
@@ -123,3 +132,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# CUSTOM USER
+AUTH_USER_MODEL = 'auth_service.CustomUser'
