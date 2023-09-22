@@ -3,6 +3,17 @@ from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
 from .managers import CustomUserManager
 
+role_options = (
+    ('BASIC', 'Basic Role'),
+    ('EMPLOYEE', 'Employee'),
+    ('SUPERVISOR', 'Supervisor'),
+    ('SALES', 'Sales'),
+    ('MARKETING', 'Marketing'),
+    ('ENGINEERING', 'Engineering'),
+    ('MANAGER', 'Manager'),
+    ('HR_MANAGER', 'HR Manager')  # super_admin
+)
+
 
 class CustomUser(AbstractUser):
     email = models.EmailField(_("Email Field"), unique=True)
@@ -15,19 +26,15 @@ class CustomUser(AbstractUser):
     phone_number = models.CharField(max_length=20)
     subdomain = models.CharField(max_length=50, unique=True)
 
-    # Username field is not needed since you're using email as the unique identifier.
-    # Remove the following line:
+    role = models.CharField(
+        max_length=255, choices=role_options, default='BASIC')
     username = None
 
     # Specify the custom manager for this model
     objects = CustomUserManager()
 
-    # You may want to add any additional fields you require.
+    USERNAME_FIELD = "email"  # unique auth field
 
-    # Define the field that uniquely identifies a user (used for authentication).
-    USERNAME_FIELD = "email"
-
-    # Add any additional fields that are required when creating a user.
     REQUIRED_FIELDS = [
         'company_name',
         'company_address',
@@ -41,3 +48,8 @@ class CustomUser(AbstractUser):
 
     def __str__(self) -> str:
         return self.email
+
+
+class UserProfile(models.Model):
+    bio = models.TextField()
+    img_url = models.URLField()

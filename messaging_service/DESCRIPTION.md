@@ -1,0 +1,1 @@
+Messaging Channels: This handles any form of emails, Push Notifications, Messaging, and more

@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    #
     'auth_service',
     'attendance_and_timesheet',
     'billing_services',
@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'performance_mgt',
     'recruit_and_track',
     'rest_framework',
+    'employee',
 ]
 
 MIDDLEWARE = [

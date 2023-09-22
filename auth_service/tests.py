@@ -1,7 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 
-
 class UserManagersTests(TestCase):
     def setUp(self):
         # Create a user model instance for testing

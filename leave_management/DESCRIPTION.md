@@ -1,0 +1,1 @@
+Leave Management: Assign leaves, track leaves(Admin/Employee), request off-day, and more
