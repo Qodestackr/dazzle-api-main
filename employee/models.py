@@ -1,5 +1,9 @@
 from django.db import models
 from auth_service.models import CustomUser
+from django.utils.translation import gettext_lazy as _
+
+from department.models import Department
+
 
 employee_status_options = (
     ('ACTIVE', 'Active'),
@@ -32,6 +36,9 @@ class TimestampedModel(models.Model):
 
 
 class Employee(TimestampedModel):
+    ip_address = models.GenericIPAddressField(verbose_name=_(u'IP address'),
+                                              blank=True, null=True, default=None)
+
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     email = models.EmailField(unique=True, db_index=True)
@@ -49,9 +56,10 @@ class Employee(TimestampedModel):
 
 
 class EmployeeEmergencyContact(TimestampedModel):
+    dependent_contact = models.CharField(max_length=50, primary_key=True)
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
-    department_relation = models.CharField(max_length=100)
-    dependent_contact = models.CharField(max_length=50)
+    department_relation = models.ForeignKey(
+        Department, on_delete=models.CASCADE)
 
     def contract_start_date(self):
         return "USE TIMESTAMPS"

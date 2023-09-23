@@ -60,7 +60,7 @@ class TimestampedModel(models.Model):
 
 class Billing(TimestampedModel):
     billing_id = models.UUIDField(
-        primary_key=True, default=uuid.uuid5, db_index=True)
+        primary_key=True, db_index=True)  #
     billing_to = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE)
     billing_plan = models.CharField(max_length=255, choices=billing_plan)
@@ -74,7 +74,7 @@ class Billing(TimestampedModel):
 
 class Subscription(TimestampedModel):
     subscription_id = models.UUIDField(
-        primary_key=True, default=uuid.uuid5, db_index=True)
+        primary_key=True, db_index=True)  # default=uuid.uuid5(namespace='', name=''),
     subscription_plan = models.CharField(
         max_length=255, choices=subscription_plan)
 
@@ -83,7 +83,8 @@ class Subscription(TimestampedModel):
 
 class Invoice(TimestampedModel):
     invoice_id = models.UUIDField(
-        primary_key=True, default=uuid.uuid5, unique=True, db_index=True,)
+        primary_key=True, unique=True, db_index=True,)  # default=uuid.uuid5(namespace='', name=''),
+
     invoice_to = models.ForeignKey(
         CustomUser, on_delete=models.CASCADE)
     invoice_date = models.DateField()

@@ -25,7 +25,7 @@ class TimestampedModel(models.Model):
 
 class Message(TimestampedModel):
     message_id = models.UUIDField(
-        primary_key=True, default=uuid.uuid5, db_index=True)
+        primary_key=True, db_index=True)  # default=uuid.uuid5(namespace='', name=''),
     sender = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     text_tile = models.CharField(max_length=255)
     message = models.TextField()

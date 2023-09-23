@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     'recruit_and_track',
     'rest_framework',
     'employee',
+    'department',
+    'policy_compliance',
 ]
 
 MIDDLEWARE = [
@@ -117,7 +119,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Nairobi'
 
 USE_I18N = True
 
