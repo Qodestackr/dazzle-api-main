@@ -25,7 +25,7 @@ class TimestampedModel(models.Model):
 
 class Message(TimestampedModel):
     message_id = models.UUIDField(
-        primary_key=True, db_index=True)  # default=uuid.uuid5(namespace='', name=''),
+        primary_key=True, default=uuid.uuid1(), db_index=True)
     sender = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     text_tile = models.CharField(max_length=255)
     message = models.TextField()
@@ -38,6 +38,8 @@ class Message(TimestampedModel):
 
 
 class NoticeBoard(TimestampedModel):
+    noticeboard_id = models.UUIDField(
+        primary_key=True, default=uuid.uuid1(), db_index=True)
     notice_title = models.CharField(max_length=255)
     # e.g alert of a new employee arrival etc
     notice_description = models.TextField()
