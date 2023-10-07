@@ -1,13 +1,14 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 
+
 class UserManagersTests(TestCase):
     def setUp(self):
-        # Create a user model instance for testing
+        # user model instance for testing
         self.User = get_user_model()
 
     def test_create_user(self):
-        # Create a regular user using the create_user method from the custom manager
+        # regular user using the create_user method from the custom manager
         user = self.User.objects.create_user(
             email='winchygichu@gmail.com',
             password='winchy.#testpassworD',

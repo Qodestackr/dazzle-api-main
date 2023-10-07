@@ -46,15 +46,14 @@ class TimestampedModel(models.Model):
         ordering = ["-updated_at"]
 
     '''
-    cls is a conventional name for the first parameter of a class method in Python. 
+    cls is a conventional name for the first parameter of a class method in Python.
     It stands for "class" and is a reference to the class itself, not an instance of the class. 
-    It allows to access and manipulate class-level attributes and behaviors.
-    cls._meta refers to the options or metadata of the class.
-    SIMPLY PUT: We do this to operate on the class itself and not an instance of a class (unlike `self`)
+    Allows access to and manipulate class-level attributes and behaviors(operate on class itself).
     '''
 
     @classmethod
     def set_ordering(cls, ordering):
+        # class metadata
         cls._meta.ordering = ordering
 
 
