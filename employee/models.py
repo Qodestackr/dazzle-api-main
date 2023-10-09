@@ -51,6 +51,7 @@ class Employee(TimestampedModel):
     department = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
 
     is_admin = models.BooleanField(default=False)
+    # EMPLOYEE EXPENSES && EMPLOYEE TOOLS/DEVICES/...
 
     TimestampedModel.set_ordering('created_at')
 

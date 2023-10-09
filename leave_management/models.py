@@ -110,3 +110,33 @@ class CustomLeaveField(models.Model):
 
     def __str__(self):
         return self.name
+
+
+'''
+model Attendance {
+  id       Int      @id
+  // type : training attendance ,, job,, meeting ,, etc*
+  date     DateTime
+  checkin  String
+  checkout String
+}
+
+model Absence {
+  id Int @id
+
+  reason String
+  status Boolean //!Approved...Communicated...Rejected
+}
+
+model Leave {
+  id        Int      @id
+  userId    String
+  startDate DateTime
+  endDate   DateTime
+  type      String // type of leave: sick, holiday, ...*
+  status    String // pending/ approved/ rejected
+  reason    String
+
+  @@map("leaves")
+}
+'''

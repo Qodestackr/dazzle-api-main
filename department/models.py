@@ -24,3 +24,20 @@ class Department(TimestampedModel):
     # expenses = models.ForeignKey(Expense, on_delete=models.CASCADE)
     # compliances = models.ForeignKey(Compliance, on_delete=models.CASCADE)
     # projects = models.ForeignKey(Project, on_delete=models.CASCADE)
+
+
+class Expense(TimestampedModel):
+    expense_type_options = (
+        ('TRAVEL', 'Travel'),
+        ('MEAL', 'Meal'),
+        ('OFFICE_SUPPLY', 'Office Supply'),
+        ('OTHER', 'Other')
+    )
+
+    expense_id = models.CharField(max_length=255)
+    expense_description = models.CharField(max_length=255)
+    expense_type = models.CharField(max_length=255)
+
+    amount = models.DecimalField()
+
+    department = models.ForeignKey(Department, on_delete=models.CASCADE)
