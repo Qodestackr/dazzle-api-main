@@ -1,3 +1,6 @@
 from django.contrib import admin
+from .models import Compliance, TaxationPolicy
 
-# Register your models here.
+
+admin.site.register(Compliance)
+admin.site.register(TaxationPolicy)

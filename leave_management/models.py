@@ -1,8 +1,9 @@
 from django.db import models
-from employee.models import TimestampedModel, Employee, EmployeeEmergencyContact
+from employee.models import Employee, EmployeeEmergencyContact
+from common.timestamps import TimeStampedModel
 
 
-class LeaveRequest(models.Model):
+class LeaveRequest(TimeStampedModel):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
     start_date = models.DateField()
     end_date = models.DateField()
@@ -11,7 +12,7 @@ class LeaveRequest(models.Model):
         'pending', 'Pending'), ('approved', 'Approved'), ('rejected', 'Rejected')])
 
 
-class LeaveType(models.Model):
+class LeaveType(TimeStampedModel):
     name = models.CharField(max_length=50)
     description = models.TextField()
 
@@ -19,7 +20,7 @@ class LeaveType(models.Model):
         return self.name
 
 
-class LeaveBalance(models.Model):
+class LeaveBalance(TimeStampedModel):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
     leave_type = models.ForeignKey(LeaveType, on_delete=models.CASCADE)
     balance = models.DecimalField(max_digits=5, decimal_places=2)
@@ -28,7 +29,7 @@ class LeaveBalance(models.Model):
         return f"{self.employee} - {self.leave_type}"
 
 
-class LeaveAccrualRule(models.Model):
+class LeaveAccrualRule(TimeStampedModel):
     leave_type = models.ForeignKey(LeaveType, on_delete=models.CASCADE)
     accrual_rate = models.DecimalField(max_digits=5, decimal_places=2)
     accrual_frequency = models.CharField(
@@ -38,7 +39,7 @@ class LeaveAccrualRule(models.Model):
         return f"{self.leave_type} - {self.accrual_rate} per {self.accrual_frequency}"
 
 
-class LeavePolicy(models.Model):
+class LeavePolicy(TimeStampedModel):
     name = models.CharField(max_length=100)
     leave_type = models.ForeignKey(LeaveType, on_delete=models.CASCADE)
     applicable_employees = models.ManyToManyField(Employee)
@@ -49,7 +50,7 @@ class LeavePolicy(models.Model):
         return self.name
 
 
-class Holiday(models.Model):
+class Holiday(TimeStampedModel):
     date = models.DateField()
     description = models.CharField(max_length=200)
 
@@ -57,7 +58,7 @@ class Holiday(models.Model):
         return f"{self.date} - {self.description}"
 
 
-class LeaveApprover(models.Model):
+class LeaveApprover(TimeStampedModel):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
     approver = models.ForeignKey(
         Employee, related_name='leave_approvers', on_delete=models.CASCADE)
@@ -66,7 +67,7 @@ class LeaveApprover(models.Model):
         return f"{self.approver} approves leave for {self.employee}"
 
 
-class LeaveHistory(models.Model):
+class LeaveHistory(TimeStampedModel):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
     leave_type = models.ForeignKey(LeaveType, on_delete=models.CASCADE)
     start_date = models.DateField()
@@ -78,7 +79,7 @@ class LeaveHistory(models.Model):
         return f"{self.employee} - {self.leave_type} - {self.start_date} to {self.end_date}"
 
 
-class LeaveNotification(models.Model):
+class LeaveNotification(TimeStampedModel):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
     message = models.TextField()
     is_read = models.BooleanField(default=False)
@@ -87,7 +88,7 @@ class LeaveNotification(models.Model):
         return f"Notification for {self.employee}"
 
 
-class LeaveAttachment(models.Model):
+class LeaveAttachment(TimeStampedModel):
     leave_request = models.ForeignKey(LeaveHistory, on_delete=models.CASCADE)
     attachment = models.FileField(upload_to='leave_attachments/')
 
@@ -95,7 +96,7 @@ class LeaveAttachment(models.Model):
         return f"Attachment for {self.leave_request}"
 
 
-class LeaveComment(models.Model):
+class LeaveComment(TimeStampedModel):
     leave_request = models.ForeignKey(LeaveHistory, on_delete=models.CASCADE)
     comment = models.TextField()
 
@@ -103,7 +104,7 @@ class LeaveComment(models.Model):
         return f"Comment for {self.leave_request}"
 
 
-class CustomLeaveField(models.Model):
+class CustomLeaveField(TimeStampedModel):
     name = models.CharField(max_length=50)
     description = models.TextField()
     # Add other field attributes as needed

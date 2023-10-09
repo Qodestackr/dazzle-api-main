@@ -56,5 +56,6 @@ class CustomUser(AbstractUser):
 
 
 class UserProfile(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     bio = models.TextField()
     img_url = models.URLField()

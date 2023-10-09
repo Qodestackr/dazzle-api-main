@@ -1,7 +1,7 @@
 from django.db import models
 from auth_service.models import CustomUser
 from django.utils.translation import gettext_lazy as _
-
+from common.timestamps import TimeStampedModel
 from department.models import Department
 
 
@@ -18,24 +18,11 @@ employee_status_options = (
 gender_options = (
     ('M', 'Male'),
     ('F', 'Female'),
-    ('O', 'Other'),
+    ('OTHER', 'Other'),
 )
 
 
-class TimestampedModel(models.Model):
-    updated_at = models.DateTimeField(auto_now=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        abstract = True
-        ordering = ["-updated_at"]
-
-    @classmethod
-    def set_ordering(cls, ordering):
-        cls._meta.ordering = ordering
-
-
-class Employee(TimestampedModel):
+class Employee(TimeStampedModel):
     ip_address = models.GenericIPAddressField(verbose_name=_(u'IP address'),
                                               blank=True, null=True, default=None)
 
@@ -49,14 +36,17 @@ class Employee(TimestampedModel):
         max_length=100, choices=employee_status_options)
 
     department = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    #
+    kra_pin = models.CharField(max_length=255)
+    nssf_number = models.CharField(max_length=255)
 
     is_admin = models.BooleanField(default=False)
     # EMPLOYEE EXPENSES && EMPLOYEE TOOLS/DEVICES/...
 
-    TimestampedModel.set_ordering('created_at')
+    TimeStampedModel.set_ordering('created_at')
 
 
-class EmployeeEmergencyContact(TimestampedModel):
+class EmployeeEmergencyContact(TimeStampedModel):
     dependent_contact = models.CharField(max_length=50, primary_key=True)
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
     department_relation = models.ForeignKey(

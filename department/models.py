@@ -1,32 +1,12 @@
 from django.db import models
 from auth_service.models import CustomUser
+from common.timestamps import TimeStampedModel
+from policy_compliance.models import Compliance
 
 
-class TimestampedModel(models.Model):
-    updated_at = models.DateTimeField(auto_now=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+class Expense(TimeStampedModel):
+    """An expense incurred by a department."""
 
-    class Meta:
-        abstract = True
-        ordering = ["-updated_at"]
-
-    @classmethod
-    def set_ordering(cls, ordering):
-        cls._meta.ordering = ordering
-
-
-class Department(TimestampedModel):
-    deparment_name = models.CharField(max_length=255, primary_key=True)
-    deparment_description = models.TextField()
-    # deparment_policy_details = models.ForeignKey(Policy, on_delete=models.CASCADE)
-
-    manager = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    # expenses = models.ForeignKey(Expense, on_delete=models.CASCADE)
-    # compliances = models.ForeignKey(Compliance, on_delete=models.CASCADE)
-    # projects = models.ForeignKey(Project, on_delete=models.CASCADE)
-
-
-class Expense(TimestampedModel):
     expense_type_options = (
         ('TRAVEL', 'Travel'),
         ('MEAL', 'Meal'),
@@ -36,8 +16,30 @@ class Expense(TimestampedModel):
 
     expense_id = models.CharField(max_length=255)
     expense_description = models.CharField(max_length=255)
-    expense_type = models.CharField(max_length=255)
+    expense_type = models.CharField(
+        max_length=255, choices=expense_type_options)
 
-    amount = models.DecimalField()
+    amount = models.DecimalField(
+        max_digits=10, decimal_places=2)  # Fixed field definition
 
-    department = models.ForeignKey(Department, on_delete=models.CASCADE)
+    # department = models.ForeignKey(Department, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.get_expense_type_display()}: {self.expense_description}"
+
+
+class Department(TimeStampedModel):
+    """A department within the company."""
+
+    department_name = models.CharField(max_length=255, primary_key=True)
+    department_description = models.TextField()
+    # department_policy_details = models.ForeignKey(
+    #     'Policy', on_delete=models.CASCADE)
+
+    manager = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    expenses = models.ManyToManyField(Expense)
+    compliances = models.ManyToManyField(Compliance)
+    # projects = models.ManyToManyField('Project')
+
+    def __str__(self):
+        return self.department_name

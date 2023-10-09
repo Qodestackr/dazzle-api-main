@@ -1,5 +1,6 @@
 from django.db import models
-from employee.models import TimeStampedModel, Employee
+from employee.models import Employee
+from common.timestamps import TimeStampedModel
 
 
 class AttendanceRecord(TimeStampedModel):

@@ -1,3 +1,6 @@
 from django.contrib import admin
+from .models import Audit, DatabaseBackup
 
-# Register your models here.
+
+admin.site.register(Audit)
+admin.site.register(DatabaseBackup)

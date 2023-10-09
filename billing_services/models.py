@@ -1,6 +1,7 @@
 from django.db import models
 import uuid
 from auth_service.models import CustomUser
+from common.timestamps import TimeStampedModel
 
 subscription_plan = (
     ('ONE_TIME_USER', 'One-Time User'),
@@ -37,27 +38,7 @@ payment_status = (
 )
 
 
-class TimestampedModel(models.Model):
-    updated_at = models.DateTimeField(auto_now=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        abstract = True
-        ordering = ["-updated_at"]
-
-    '''
-    cls is a conventional name for the first parameter of a class method in Python.
-    It stands for "class" and is a reference to the class itself, not an instance of the class. 
-    Allows access to and manipulate class-level attributes and behaviors(operate on class itself).
-    '''
-
-    @classmethod
-    def set_ordering(cls, ordering):
-        # class metadata
-        cls._meta.ordering = ordering
-
-
-class Billing(TimestampedModel):
+class Billing(TimeStampedModel):
     billing_id = models.UUIDField(
         primary_key=True, db_index=True)  #
     billing_to = models.ForeignKey(
@@ -71,16 +52,16 @@ class Billing(TimestampedModel):
     payment_method = models.CharField(max_length=255, choices=payment_method)
 
 
-class Subscription(TimestampedModel):
+class Subscription(TimeStampedModel):
     subscription_id = models.UUIDField(
         primary_key=True, db_index=True)  # default=uuid.uuid5(namespace='', name=''),
     subscription_plan = models.CharField(
         max_length=255, choices=subscription_plan)
 
-    TimestampedModel.set_ordering('created_at')
+    TimeStampedModel.set_ordering('created_at')
 
 
-class Invoice(TimestampedModel):
+class Invoice(TimeStampedModel):
     invoice_id = models.UUIDField(
         primary_key=True, unique=True, db_index=True,)  # default=uuid.uuid5(namespace='', name=''),
 
@@ -90,4 +71,4 @@ class Invoice(TimestampedModel):
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
     billing = models.ForeignKey(Billing, on_delete=models.CASCADE)
 
-    TimestampedModel.set_ordering('created_at')
+    TimeStampedModel.set_ordering('created_at')

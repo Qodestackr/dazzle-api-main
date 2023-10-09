@@ -1,23 +1,11 @@
 from django.db import models
 from auth_service.models import CustomUser
 from department.models import Department
+from common.timestamps import TimeStampedModel
 import uuid
 
 
-class TimestampedModel(models.Model):
-    updated_at = models.DateTimeField(auto_now=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        abstract = True
-        ordering = ["-updated_at"]
-
-    @classmethod
-    def set_ordering(cls, ordering):
-        cls._meta.ordering = ordering
-
-
-class Message(TimestampedModel):
+class Message(TimeStampedModel):
     messaging_channel_options = (
         ('discord', 'Discord'),
         ('ms_teams', 'Microsoft Teams'),
@@ -32,7 +20,7 @@ class Message(TimestampedModel):
 
     message_status_options = (
         ('sending', 'Sending'),
-        ('delivered', 'Delivered')
+        ('delivered', 'Delivered'),
         ('read', 'Read'),
         ('failed', 'Failed'),
     )
@@ -54,7 +42,7 @@ class Message(TimestampedModel):
         return ""
 
 
-class NoticeBoard(TimestampedModel):
+class NoticeBoard(TimeStampedModel):
     noticeboard_delete_after_options = (
         ('one_week', 'One Week'),
         ('one_month', 'One Month'),
