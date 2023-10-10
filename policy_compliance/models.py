@@ -30,4 +30,7 @@ class Compliance(TimeStampedModel):
 
     compliance_type = models.CharField(max_length=255, )
 
+    class Meta:
+        verbose_name_plural = 'Policy Compliances'
+
     # department = models.ForeignKey(Department, on_delete=models.CASCADE)

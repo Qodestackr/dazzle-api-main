@@ -25,6 +25,9 @@ class TimesheetRecord(TimeStampedModel):
 
 
 class Holiday(TimeStampedModel):
+    '''
+    TODO: Auto load country specific Holidays
+    '''
     date = models.DateField()
     description = models.CharField(max_length=200)
 

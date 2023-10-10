@@ -1,0 +1,73 @@
+Use Case: Authentication
+You can create a decorator to check if a user is authenticated and redirect them to a login page if they are not.
+
+from django.shortcuts import redirect
+
+def login_required(view_func):
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect('login')
+        return view_func(request, *args, **kwargs)
+    return wrapper
+
+# Apply the decorator to a view
+@login_required
+def protected_view(request):
+    # View logic for authenticated users
+
+
+Use Case: Permissions
+You can create a decorator to check if a user has specific permissions to access a view.
+
+from django.http import HttpResponseForbidden
+
+def user_has_permission(permission):
+    def decorator(view_func):
+        @wraps(view_func)
+        def wrapper(request, *args, **kwargs):
+            if not request.user.has_perm(permission):
+                return HttpResponseForbidden("Permission denied")
+            return view_func(request, *args, **kwargs)
+        return wrapper
+    return decorator
+
+# Apply the decorator to a view
+@user_has_permission('app.view_model')
+def view_with_permission(request):
+    # View logic for users with 'view_model' permission
+
+
+
+Use Case: Rate Limiting
+You can create a decorator to limit the rate at which a view can be accessed.
+
+
+import time
+from django.http import HttpResponseTooManyRequests
+
+def rate_limit(limit, interval):
+    def decorator(view_func):
+        hits = {}
+        
+        @wraps(view_func)
+        def wrapper(request, *args, **kwargs):
+            ip = request.META.get('REMOTE_ADDR')
+            now = int(time.time())
+            
+            if ip not in hits:
+                hits[ip] = [(now, 1)]
+            else:
+                hits[ip] = [(t, c) for t, c in hits[ip] if now - t < interval] + [(now, len(hits[ip]) + 1)]
+            
+            if sum(c for t, c in hits[ip]) > limit:
+                return HttpResponseTooManyRequests("Rate limit exceeded")
+            
+            return view_func(request, *args, **kwargs)
+        return wrapper
+    return decorator
+
+# Apply the decorator to a view
+@rate_limit(limit=5, interval=60)  # Allow 5 requests per minute
+def limited_view(request):
+    # View logic with rate limiting

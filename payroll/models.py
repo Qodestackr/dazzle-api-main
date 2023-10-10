@@ -32,6 +32,9 @@ class Tax(TimeStampedModel):
         'NHIF', 'National Hospital Insurance Fund'), ('NSSF', 'National Social Security Fund'), ('HDMF', 'Home Development Mutual Fund')])
     tax_amount = models.DecimalField(max_digits=10, decimal_places=2)
 
+    class Meta:
+        verbose_name_plural = 'Taxes'
+
 
 class Deduction(TimeStampedModel):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE)

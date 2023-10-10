@@ -21,6 +21,26 @@ gender_options = (
     ('OTHER', 'Other'),
 )
 
+employee_role_options = (
+    ('BASIC', 'Basic Role'),
+    ('EMPLOYEE', 'Employee'),
+    ('SUPERVISOR', 'Supervisor'),
+    ('SALES', 'Sales'),
+    ('MARKETING', 'Marketing'),
+    ('ENGINEERING', 'Engineering'),
+    ('MANAGER', 'Manager'),
+    ('HR_MANAGER', 'HR Manager'),  # super_admin
+    ('TECHNICAL_SUPPORT', 'Technical Support'),
+    ('DESIGNER', 'Designer'),
+    ('FINANCE', 'Finance'),
+    ('OPERATIONS', 'Operations'),
+    ('QUALITY_ASSURANCE', 'Quality Assurance'),
+    ('LEGAL', 'Legal'),
+    ('RESEARCH', 'Research'),
+    ('CUSTOMER_SUPPORT', 'Customer Support'),
+    # More
+)
+
 
 class Employee(TimeStampedModel):
     ip_address = models.GenericIPAddressField(verbose_name=_(u'IP address'),
@@ -36,11 +56,12 @@ class Employee(TimeStampedModel):
         max_length=100, choices=employee_status_options)
 
     department = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    #
-    kra_pin = models.CharField(max_length=255)
+    '''    kra_pin = models.CharField(max_length=255)
     nssf_number = models.CharField(max_length=255)
-
+    role = models.CharField(
+        max_length=50, choices=employee_role_options, default='BASIC')'''
     is_admin = models.BooleanField(default=False)
+
     # EMPLOYEE EXPENSES && EMPLOYEE TOOLS/DEVICES/...
 
     TimeStampedModel.set_ordering('created_at')
@@ -51,6 +72,9 @@ class EmployeeEmergencyContact(TimeStampedModel):
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
     department_relation = models.ForeignKey(
         Department, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name_plural = 'Emergency Conctact'
 
     def contract_start_date(self):
         return "USE TIMESTAMPS"

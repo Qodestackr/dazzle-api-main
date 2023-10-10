@@ -46,6 +46,9 @@ class LeavePolicy(TimeStampedModel):
     maximum_leave_balance = models.DecimalField(max_digits=5, decimal_places=2)
     # Add other policy-specific fields
 
+    class Meta:
+        verbose_name_plural = 'Leave Policies'
+
     def __str__(self):
         return self.name
 
@@ -74,6 +77,9 @@ class LeaveHistory(TimeStampedModel):
     end_date = models.DateField()
     status = models.CharField(max_length=20, choices=[(
         'pending', 'Pending'), ('approved', 'Approved'), ('rejected', 'Rejected')])
+
+    class Meta:
+        verbose_name_plural = 'Leave History'
 
     def __str__(self):
         return f"{self.employee} - {self.leave_type} - {self.start_date} to {self.end_date}"

@@ -1,82 +1,70 @@
-from email import message
-from django.shortcuts import render, redirect
-import uuid
-
+from rest_framework import status
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response import Response
+from common.billing import calculate_prorated_cost
+from common.tasks import send_email
+from django.shortcuts import get_object_or_404
+from django.contrib.auth.decorators import login_required
 from .models import Invoice, Subscription, Billing
+from .serializers import BillingSerializer, SubscriptionSerializer
 
 
-
-# Invoice: https://python.plainenglish.io/build-a-complete-invoicing-web-application-with-django-8e6c56745935
-@login_required()
-def create_invoice(request):
-    # Blank invoice
-
-    number = 'INV' + str(uuid.uuid5()).split('-')[1]
-    new_invoice = Invoice.objects.create(number=number)
-
-    new_invoice.save
-
-    inv = Invoice.objects.get(number=number)
-
-    return redirect('create-build-invoice', slug=inv.slug)
-
-
-
+@api_view(['POST'])
 @login_required
-def create_build_invoice(request, slug):
-    #fetch that invoice
-    try:
-        invoice = Invoice.objects.get(slug=slug)
-        pass
-    except:
-        message.error(request, 'Something went wrong')
-        return redirect('invoices')
-
-    #fetch all the products - related to this invoice
-    products = Billing.objects.filter(invoice=invoice)
+def create_invoice(request):
+    # You can customize this logic as needed
+    # Example logic to create an invoice
+    # Total amount initially set to 0
+    invoice = Invoice.objects.create(invoice_to=request.user, total_amount=0)
+    serializer = BillingSerializer(invoice)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-    context = {}
-    context['invoice'] = invoice
-    context['products'] = products
+@api_view(['POST'])
+@login_required
+def add_billing_item(request, invoice_id):
+    invoice = get_object_or_404(Invoice, invoice_id=invoice_id)
+    data = request.data  # You should provide the necessary data for the billing item
 
-    # if request.method == 'GET':
-    #     prod_form  = ProductForm()
-    #     inv_form = InvoiceForm(instance=invoice)
-    #     client_form = ClientSelectForm(initial_client=invoice.client)
-    #     context['prod_form'] = prod_form
-    #     context['inv_form'] = inv_form
-    #     context['client_form'] = client_form
-    #     return render(request, 'invoice/create-invoice.html', context)
+    # Your logic to add a billing item, calculate total amount, etc.
 
-    # if request.method == 'POST':
-    #     prod_form  = ProductForm(request.POST)
-    #     inv_form = InvoiceForm(request.POST, instance=invoice)
-    #     client_form = ClientSelectForm(request.POST, initial_client=invoice.client, instance=invoice)
+    # Example calculation of total amount
+    invoice.total_amount += data.get('amount', 0)
+    invoice.save()
 
-    #     if prod_form.is_valid():
-    #         obj = prod_form.save(commit=False)
-    #         obj.invoice = invoice
-    #         obj.save()
-
-    #         messages.success(request, "Invoice product added succesfully")
-    #         return redirect('create-build-invoice', slug=slug)
-    #     elif inv_form.is_valid and 'paymentTerms' in request.POST:
-    #         inv_form.save()
-
-    #         messages.success(request, "Invoice updated succesfully")
-    #         return redirect('create-build-invoice', slug=slug)
-    #     elif client_form.is_valid() and 'client' in request.POST:
-
-    #         client_form.save()
-    #         messages.success(request, "Client added to invoice succesfully")
-    #         return redirect('create-build-invoice', slug=slug)
-    #     else:
-    #         context['prod_form'] = prod_form
-    #         context['inv_form'] = inv_form
-    #         context['client_form'] = client_form
-    #         messages.error(request,"Problem processing your request")
-    #         return render(request, 'invoice/create-invoice.html', context)
+    serializer = BillingSerializer(invoice)
+    return Response(serializer.data)
 
 
-    return render(request, 'invoice/create-invoice.html', context)
+@api_view(['POST'])
+@login_required
+def subscribe_user(request):
+    # Example logic to handle user subscription
+
+    # Get the subscription start date and monthly cost from the request
+    subscription_start_date = request.data.get('subscription_start_date')
+    monthly_cost = request.data.get('monthly_cost')
+
+    # Calculate the pro-rated cost
+    pro_rated_cost = calculate_prorated_cost(
+        subscription_start_date, monthly_cost)
+
+    # Create a new subscription record
+    subscription = Subscription.objects.create(
+        user=request.user,
+        subscription_plan=request.data.get('subscription_plan'),
+        pro_rated_cost=pro_rated_cost,
+    )
+
+    serializer = SubscriptionSerializer(subscription)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+def send_email_view(request):
+    subject = 'Subject of the email'
+    message = 'This is the message body.'
+    from_email = 'sender@example.com'
+    recipient_list = ['recipient@example.com']
+
+    send_email.delay(subject, message, from_email, recipient_list)
+    return Response("Email sending task started.")

@@ -1,5 +1,6 @@
 from django.db import models
 from auth_service.models import CustomUser
+from django.conf import settings
 from department.models import Department
 from common.timestamps import TimeStampedModel
 import uuid
@@ -28,7 +29,8 @@ class Message(TimeStampedModel):
     message_id = models.UUIDField(
         primary_key=True, default=uuid.uuid1(), db_index=True)
 
-    sender = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    sender = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     text_tile = models.CharField(max_length=255)
     message = models.TextField()
 
@@ -37,9 +39,6 @@ class Message(TimeStampedModel):
 
     messaging_channel = models.TextField(
         choices=messaging_channel_options)  # Recipient
-
-    def delete_message(self):
-        return ""
 
 
 class NoticeBoard(TimeStampedModel):
@@ -56,4 +55,4 @@ class NoticeBoard(TimeStampedModel):
     notice_description = models.TextField()
     auto_delete_after = models.CharField(
         max_length=50, choices=noticeboard_delete_after_options)
-    departments = models.ForeignKey(Department, on_delete=models.CASCADE)
+    # departments = models.ForeignKey(Department, on_delete=models.CASCADE)

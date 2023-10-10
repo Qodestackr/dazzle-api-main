@@ -29,6 +29,9 @@ class Audit(TimeStampedModel):
     # action => access log
     # departmentId
 
+    class Meta:
+        verbose_name_plural = 'HR Audits'
+
 
 '''
 department might have its own custom way of backups other than others. 
