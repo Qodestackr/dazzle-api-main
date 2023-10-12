@@ -28,7 +28,7 @@ class Compliance(TimeStampedModel):
     compliance_id = models.CharField(max_length=255)
     compliance_description = models.CharField(max_length=255)
 
-    compliance_type = models.CharField(max_length=255, )
+    compliance_type = models.CharField(max_length=255, choices=compliance_type_options)
 
     class Meta:
         verbose_name_plural = 'Policy Compliances'

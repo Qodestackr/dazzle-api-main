@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
 from .managers import CustomUserManager
+from django.conf import settings
 
 role_options = (
     ('BASIC', 'Basic Role'),
@@ -56,6 +57,8 @@ class CustomUser(AbstractUser):
 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True, related_name="profile")
     bio = models.TextField()
     img_url = models.URLField()
+# https://stackoverflow.com/questions/26312219/operationalerror-no-such-column-django

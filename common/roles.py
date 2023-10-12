@@ -53,6 +53,4 @@ Apply the require_role decorator to views that should be restricted based on rol
 @require_role(['SALES', 'MARKETING', 'ADMIN'])
 def some_view(request):
     # View logic for users with the specified roles
-
-
 '''

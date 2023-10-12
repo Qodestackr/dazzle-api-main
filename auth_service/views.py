@@ -1,37 +1,19 @@
-from django.shortcuts import render, HttpResponse
-from .models import CustomUser
-
-def CreateUser():
-    model = CustomUser
-    fields = [
-        'email',
-        'company_name',
-        'company_address',
-        'industry',
-        'employee_count',
-        'contact_person_name',
-        'contact_email',
-        'phone_number',
-        'subdomain',
-    ]
+from rest_framework import viewsets, permissions, authentication
+from .models import UserProfile, CustomUser
+from .serializers import CustomUserSerializer, UserProfileSerializer
 
 
-def UpdateUser():
-    models = CustomUser
-
-    fields = [
-
-    ]
-
-
-def DeleteUser():
-    model = CustomUser
+class CustomUserViewSet(viewsets.ModelViewSet):
+    queryset = CustomUser.objects.all()
+    serializer_class = CustomUserSerializer
+    # Require authentication for these views
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [authentication.TokenAuthentication]
 
 
-def UserList(request):
-    users = CustomUser.objects.all()
-
-    return HttpResponse(users)
-
-
-# https://reintech.io/blog/creating-a-custom-user-management-system-in-django
+class UserProfileViewSet(viewsets.ModelViewSet):
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
+    # Require authentication for these views
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [authentication.TokenAuthentication]

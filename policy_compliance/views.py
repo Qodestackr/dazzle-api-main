@@ -1,37 +1,21 @@
 from django.shortcuts import render
-
-# Create your views here.
-
-
-def get_countries():
-    '''
-    Fetch all supported countries from the system
-    '''
-    pass
+from rest_framework import permissions, viewsets
+from rest_framework.authentication import TokenAuthentication
+from .models import Compliance, TaxationPolicy
+from .serializers import ComplianceSerializer, TaxationPolicySerializer
 
 
-def get_all_policies():
-    '''
-    Fetch all policies by country
-    '''
-    pass
+class ComplianceViewSet(viewsets.ViewSet):
+    queryset = Compliance.objects.all()
+    serializer_class = ComplianceSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
 
 
-def get_country_policy():
-    '''
-    Specific country policies: Tax, Compliance rules, etc
-    '''
+class TaxationPolicyViewSet(viewsets.ViewSet):
+    queryset = TaxationPolicy.objects.all()
+    serializer_class = TaxationPolicySerializer
+    permission_classes = [permissions.IsAuthenticated,
+                          permissions.IsAuthenticatedOrReadOnly, permissions.IsAdminUser]
 
-
-def EU_Policy():
-    '''
-
-    '''
-    pass
-
-
-def update_country_sync_policy():
-    '''
-    Sync and update <Manual or automated>
-    '''
-    pass
+    authentication_classes = [TokenAuthentication]

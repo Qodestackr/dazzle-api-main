@@ -55,11 +55,11 @@ class Employee(TimeStampedModel):
     employment_status = models.CharField(
         max_length=100, choices=employee_status_options)
 
-    department = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    '''    kra_pin = models.CharField(max_length=255)
+    department = models.ForeignKey(Department, on_delete=models.CASCADE)
+    kra_pin = models.CharField(max_length=255)
     nssf_number = models.CharField(max_length=255)
     role = models.CharField(
-        max_length=50, choices=employee_role_options, default='BASIC')'''
+        max_length=50, choices=employee_role_options, default='BASIC')
     is_admin = models.BooleanField(default=False)
 
     # EMPLOYEE EXPENSES && EMPLOYEE TOOLS/DEVICES/...
@@ -68,19 +68,14 @@ class Employee(TimeStampedModel):
 
 
 class EmployeeEmergencyContact(TimeStampedModel):
-    dependent_contact = models.CharField(max_length=50, primary_key=True)
-    employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    dependent_contact = models.CharField(max_length=50)
+    employee = models.ForeignKey(
+        Employee, on_delete=models.CASCADE, related_name='emergency_contacts')
     department_relation = models.ForeignKey(
         Department, on_delete=models.CASCADE)
 
     class Meta:
-        verbose_name_plural = 'Emergency Conctact'
-
-    def contract_start_date(self):
-        return "USE TIMESTAMPS"
-
-    def contract_details(self):
-        return "CONTRACT DETAILS"
+        verbose_name_plural = 'Emergency Contacts'
 
 
 '''

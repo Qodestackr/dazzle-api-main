@@ -29,5 +29,6 @@ models_to_register = [
     Holiday
 ]
 
-for model in models_to_register:
-    admin.site.register(model)
+# for model in models_to_register:
+#     admin.site.register(model)
+admin.site.register(models_to_register)

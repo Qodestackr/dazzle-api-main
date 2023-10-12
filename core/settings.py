@@ -31,12 +31,15 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
+    # 'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'drf_yasg',
+    'django_filters',
+    'rest_framework',
     #
     'auth_service',
     'attendance_and_timesheet',
@@ -47,7 +50,6 @@ INSTALLED_APPS = [
     'payroll',
     'performance_mgt',
     'recruit_and_track',
-    'rest_framework',
     'employee',
     'department',
     'policy_compliance',
@@ -153,3 +155,9 @@ EMAIL_HOST_PASSWORD = 'your-email-password'
 
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
 CELERY_RESULT_BACKEND = 'django-db'
+
+
+# -------------- SWAGGER -----------------#
+# SWAGGER_SETTINGS = {
+#     'VALIDATOR_URL': 'http://localhost:8189',
+# }
