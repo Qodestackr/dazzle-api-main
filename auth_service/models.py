@@ -38,6 +38,7 @@ class CustomUser(AbstractUser):
 
     # Specify the custom manager for this model
     objects = CustomUserManager()
+    default_manager = models.Manager()
 
     USERNAME_FIELD = "email"  # unique auth field
 

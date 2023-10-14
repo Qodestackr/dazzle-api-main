@@ -1,4 +1,5 @@
 from rest_framework import viewsets, permissions, authentication
+from django.contrib.auth.models import User  # User of CustomUser?
 from .models import UserProfile, CustomUser
 from .serializers import CustomUserSerializer, UserProfileSerializer
 

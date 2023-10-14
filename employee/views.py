@@ -27,45 +27,40 @@ class EmployeeEmergencyContactViewSet(viewsets.ViewSet):
 
 
 '''
-1. Employee Management:
-
-List Employees: View a list of all employees.
-Create Employee: Add new employees to the system.
-Edit Employee: Update employee details.
-Delete Employee: Remove employees from the system.
-2. Attendance Records:
+Attendance Records:
 
 View Attendance Records: Display a list of attendance records for each employee.
 Check-In: Allow employees to check in when they start their workday.
 Check-Out: Allow employees to check out when they finish their workday.
-3. Timesheet Records:
+
+Timesheet Records:
 
 View Timesheet Records: Show a list of timesheet records for each employee.
 Add Timesheet Entry: Allow employees to record their work hours and project details.
 Edit Timesheet Entry: Update or edit existing timesheet records.
 Delete Timesheet Entry: Remove or delete timesheet records.
-4. Leave Management:
+
+Leave Management:
 
 View Leave Requests: Display a list of leave requests.
 Create Leave Request: Allow employees to request time off.
 Approve or Reject Leave Request: Enable managers or administrators to review and approve/reject leave requests.
-5. Holiday Management:
+
+Holiday Management:
 
 View Holidays: Show a list of holidays.
 Add Holiday: Allow administrators to add new holidays.
-6. Reporting:
+
+Reporting:
 
 Generate Reports: Create reports summarizing attendance and timesheet data for specific periods.
 Export Data: Provide the ability to export data in various formats (e.g., CSV, Excel).
-7. User Authentication and Authorization:
 
-Implement user authentication and authorization to ensure that only authorized users can access specific views and perform actions.
-8. User Dashboard:
+User Dashboard:
 
-Provide a user dashboard where employees can view their attendance records, timesheets, and leave balances.
-9. Notifications:
+Provide a user dashboard where employees can view their attendance records, timesheets, 
+and leave balances.
 
-Send email or in-app notifications to employees and managers about attendance, timesheets, and leave requests.
 10. Data Validation and Error Handling:
 - Implement validation for data entry to ensure accuracy and handle errors gracefully.
 

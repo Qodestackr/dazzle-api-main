@@ -37,3 +37,19 @@ class TimesheetRecordDetail(generics.RetrieveUpdateDestroyAPIView):
 
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
+
+
+'''
+Attendance Records:
+
+View Attendance Records: Display a list of attendance records for each employee.
+Check-In: Allow employees to check in when they start their workday.
+Check-Out: Allow employees to check out when they finish their workday.
+
+Timesheet Records:
+
+View Timesheet Records: Show a list of timesheet records for each employee.
+Add Timesheet Entry: Allow employees to record their work hours and project details.
+Edit Timesheet Entry: Update or edit existing timesheet records.
+Delete Timesheet Entry: Remove or delete timesheet records.
+'''
